@@ -37,11 +37,12 @@ This is part of my **Upwork data engineering portfolio** to showcase practical P
 ## 📂 Folder Structure
 
 
-.
+```
 ├── main_etl.py
 ├── nyc_taxi_sample.csv
 ├── requirements.txt
 └── output_parquet/   # Created after ETL run
+```
 
 
 ---
