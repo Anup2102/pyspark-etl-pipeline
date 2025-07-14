@@ -5,13 +5,12 @@ from pyspark.sql.functions import col, current_date, to_date
 spark = SparkSession.builder \
     .appName("Automated ETL Pipeline") \
     .getOrCreate()
-
-# Print Hadoop version (for debugging/environment info)
-print(spark.sparkContext._jvm.org.apache.hadoop.util.VersionInfo.getVersion())
+print("Spark session created.")
 
 # 2. Read raw CSV data with header
 input_path = "nyc_taxi_sample.csv"
 df_raw = spark.read.option("header", True).csv(input_path)
+print("Reading input CSV data...")
 
 print("=== RAW DATA SAMPLE ===")
 df_raw.show(5)
@@ -23,6 +22,7 @@ df_clean = df_raw \
     .withColumn("fare_amount", col("fare_amount").cast("double")) \
     .withColumn("pickup_datetime", to_date(col("pickup_datetime"))) \
     .withColumn("dropoff_datetime", to_date(col("dropoff_datetime")))
+print("Cleaning and transforming data...")
 
 # 4. Add load_date column with current date
 df_clean = df_clean.withColumn("load_date", current_date())
@@ -36,6 +36,9 @@ df_clean.show(5)
 # 6. Write cleaned data as partitioned Parquet files by load_date
 output_path = "output_parquet"
 df_clean.write.mode("overwrite").partitionBy("load_date").parquet(output_path)
+print("Writing partitioned Parquet files...")
+
+# 7. Final message
 
 print(f"ETL Pipeline completed successfully. Cleaned data written to: {output_path}")
 
